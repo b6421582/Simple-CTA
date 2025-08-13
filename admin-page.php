@@ -18,19 +18,25 @@ class SimpleCTAAdminPage {
      */
     public static function render() {
         // 检查用户权限
-        if (!current_user_can('manage_options')) {
-            wp_die(__('您没有权限访问此页面。', 'simple-cta'));
+        if (!function_exists('current_user_can') || !current_user_can('manage_options')) {
+            if (function_exists('wp_die') && function_exists('__')) {
+                wp_die(__('您没有权限访问此页面。', 'simple-cta'));
+            } else {
+                die('您没有权限访问此页面。');
+            }
         }
         
         // 处理表单提交
-        if (isset($_POST['submit']) && wp_verify_nonce($_POST['simple_cta_nonce'], 'simple_cta_save_settings')) {
+        if (isset($_POST['submit']) && isset($_POST['simple_cta_nonce']) &&
+            function_exists('wp_verify_nonce') &&
+            wp_verify_nonce($_POST['simple_cta_nonce'], 'simple_cta_save_settings')) {
             self::handleFormSubmission();
         }
         
         // 获取当前设置
-        $platforms = get_option('simple_cta_platforms', []);
-        $styles = get_option('simple_cta_styles', []);
-        $settings = get_option('simple_cta_settings', []);
+        $platforms = function_exists('get_option') ? get_option('simple_cta_platforms', []) : [];
+        $styles = function_exists('get_option') ? get_option('simple_cta_styles', []) : [];
+        $settings = function_exists('get_option') ? get_option('simple_cta_settings', []) : [];
         
         ?>
         <div class="wrap">
@@ -42,7 +48,6 @@ class SimpleCTAAdminPage {
                         <a href="#general" class="nav-tab nav-tab-active"><?php _e('基本设置', 'simple-cta'); ?></a>
                         <a href="#platforms" class="nav-tab"><?php _e('平台规则', 'simple-cta'); ?></a>
                         <a href="#styles" class="nav-tab"><?php _e('CTA样式', 'simple-cta'); ?></a>
-                        <a href="#preview" class="nav-tab"><?php _e('预览测试', 'simple-cta'); ?></a>
                     </nav>
                     
                     <form method="post" action="">
@@ -76,11 +81,22 @@ class SimpleCTAAdminPage {
                                     <th scope="row"><?php _e('加载CSS', 'simple-cta'); ?></th>
                                     <td>
                                         <label>
-                                            <input type="checkbox" name="settings[load_css]" value="1" 
+                                            <input type="checkbox" name="settings[load_css]" value="1"
                                                 <?php checked(!empty($settings['load_css']), true); ?>>
                                             <?php _e('自动加载CTA样式CSS', 'simple-cta'); ?>
                                         </label>
                                         <p class="description"><?php _e('如果您的主题已包含CTA样式，可以关闭此选项。', 'simple-cta'); ?></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><?php _e('添加Nofollow', 'simple-cta'); ?></th>
+                                    <td>
+                                        <label>
+                                            <input type="checkbox" name="settings[add_nofollow]" value="1"
+                                                <?php checked(!empty($settings['add_nofollow']), true); ?>>
+                                            <?php _e('自动为联盟链接添加 rel="nofollow" 属性', 'simple-cta'); ?>
+                                        </label>
+                                        <p class="description"><?php _e('如果链接已有nofollow属性则不会重复添加。建议开启以符合SEO最佳实践。', 'simple-cta'); ?></p>
                                     </td>
                                 </tr>
                                 <tr>
@@ -135,7 +151,7 @@ class SimpleCTAAdminPage {
                                                 <th><?php _e('匹配规则', 'simple-cta'); ?></th>
                                                 <td>
                                                     <div class="patterns-list">
-                                                        <?php foreach ($platform['patterns'] as $index => $pattern): ?>
+                                                        <?php foreach ($platform['patterns'] as $pattern): ?>
                                                             <div class="pattern-item">
                                                                 <input type="text" 
                                                                     name="platforms[<?php echo esc_attr($platform_key); ?>][patterns][]" 
@@ -208,35 +224,7 @@ class SimpleCTAAdminPage {
                                 </button>
                             </div>
                         </div>
-                        
-                        <!-- 预览测试标签页 -->
-                        <div id="preview" class="tab-content">
-                            <h2><?php _e('预览测试', 'simple-cta'); ?></h2>
-                            <p><?php _e('测试链接检测和样式应用效果。', 'simple-cta'); ?></p>
-                            
-                            <div class="preview-section">
-                                <h3><?php _e('链接测试', 'simple-cta'); ?></h3>
-                                <textarea id="test-content" rows="5" cols="80" placeholder="<?php _e('在此输入包含链接的HTML内容进行测试...', 'simple-cta'); ?>"></textarea>
-                                <br><br>
-                                <button type="button" class="button button-primary" id="test-links"><?php _e('测试检测', 'simple-cta'); ?></button>
-                                
-                                <div id="test-results" style="margin-top: 20px;"></div>
-                            </div>
-                            
-                            <div class="preview-section">
-                                <h3><?php _e('样式预览', 'simple-cta'); ?></h3>
-                                <div class="style-previews">
-                                    <?php foreach ($styles as $style_key => $style): ?>
-                                        <div class="preview-item">
-                                            <h4><?php echo esc_html($style['name']); ?></h4>
-                                            <a href="#" class="simple-cta <?php echo esc_attr($style_key); ?>" onclick="return false;">
-                                                <?php _e('示例按钮', 'simple-cta'); ?>
-                                            </a>
-                                        </div>
-                                    <?php endforeach; ?>
-                                </div>
-                            </div>
-                        </div>
+
                         
                         <?php submit_button(__('保存设置', 'simple-cta')); ?>
                     </form>
@@ -255,6 +243,12 @@ class SimpleCTAAdminPage {
             .preview-section { margin: 30px 0; }
             .style-previews { display: flex; flex-wrap: wrap; gap: 20px; }
             .preview-item { padding: 15px; border: 1px solid #ddd; background: #fff; }
+
+            /* 隐藏WordPress版本信息 */
+            body.settings_page_simple-cta #wpfooter,
+            body.settings_page_simple-cta .wp-admin #wpfooter {
+                display: none !important;
+            }
         </style>
         
         <script>
@@ -282,18 +276,7 @@ class SimpleCTAAdminPage {
             $(document).on('click', '.remove-pattern', function() {
                 $(this).parent().remove();
             });
-            
-            // 测试链接检测
-            $('#test-links').click(function() {
-                var content = $('#test-content').val();
-                if (!content) {
-                    alert('请输入测试内容');
-                    return;
-                }
-                
-                // 这里可以添加AJAX调用来测试链接检测
-                $('#test-results').html('<p>测试功能开发中...</p>');
-            });
+
         });
         </script>
         <?php
@@ -303,25 +286,165 @@ class SimpleCTAAdminPage {
      * 处理表单提交
      */
     private static function handleFormSubmission() {
-        // 保存设置
-        if (isset($_POST['settings'])) {
-            update_option('simple_cta_settings', $_POST['settings']);
+        // 确保WordPress函数可用
+        if (!function_exists('update_option') || !function_exists('add_action') || !function_exists('__')) {
+            return;
         }
-        
-        // 保存平台规则
-        if (isset($_POST['platforms'])) {
-            update_option('simple_cta_platforms', $_POST['platforms']);
+
+        try {
+            // 保存设置
+            if (isset($_POST['settings'])) {
+                $settings = self::sanitizeSettings($_POST['settings']);
+                update_option('simple_cta_settings', $settings);
+            }
+
+            // 保存平台规则
+            if (isset($_POST['platforms'])) {
+                $platforms = self::sanitizePlatforms($_POST['platforms']);
+                update_option('simple_cta_platforms', $platforms);
+            }
+
+            // 保存样式
+            if (isset($_POST['styles'])) {
+                $styles = self::sanitizeStyles($_POST['styles']);
+                update_option('simple_cta_styles', $styles);
+            }
+
+            // 清理插件缓存（如果插件实例存在）
+            if (class_exists('SimpleCTA')) {
+                $instance = SimpleCTA::getInstance();
+                if (method_exists($instance, 'clearCache')) {
+                    $instance->clearCache();
+                }
+            }
+
+            // 显示成功消息
+            add_action('admin_notices', function() {
+                echo '<div class="notice notice-success is-dismissible"><p>' . __('设置已保存！', 'simple-cta') . '</p></div>';
+            });
+        } catch (Exception $e) {
+            // 显示错误消息
+            add_action('admin_notices', function() use ($e) {
+                echo '<div class="notice notice-error is-dismissible"><p>' . __('保存失败：', 'simple-cta') . esc_html($e->getMessage()) . '</p></div>';
+            });
         }
-        
-        // 保存样式
-        if (isset($_POST['styles'])) {
-            update_option('simple_cta_styles', $_POST['styles']);
+    }
+
+    /**
+     * 清理设置数据
+     */
+    private static function sanitizeSettings($settings) {
+        $clean_settings = [];
+
+        // 布尔值设置
+        $boolean_fields = ['enabled', 'auto_detect', 'load_css', 'add_nofollow', 'preserve_attributes'];
+        foreach ($boolean_fields as $field) {
+            $clean_settings[$field] = !empty($settings[$field]);
         }
-        
-        // 显示成功消息
-        add_action('admin_notices', function() {
-            echo '<div class="notice notice-success is-dismissible"><p>' . __('设置已保存！', 'simple-cta') . '</p></div>';
-        });
+
+        // 字符串设置
+        $default_style = $settings['default_style'] ?? 'modern';
+        $clean_settings['default_style'] = function_exists('sanitize_text_field')
+            ? sanitize_text_field($default_style)
+            : trim(strip_tags($default_style));
+
+        // 数字设置
+        $clean_settings['priority'] = intval($settings['priority'] ?? 15);
+
+        return $clean_settings;
+    }
+
+    /**
+     * 清理平台数据
+     */
+    private static function sanitizePlatforms($platforms) {
+        $clean_platforms = [];
+
+        foreach ($platforms as $key => $platform) {
+            // 清理键名
+            $clean_key = function_exists('sanitize_key')
+                ? sanitize_key($key)
+                : preg_replace('/[^a-z0-9_\-]/', '', strtolower($key));
+
+            // 清理平台名称
+            $name = $platform['name'] ?? '';
+            $clean_name = function_exists('sanitize_text_field')
+                ? sanitize_text_field($name)
+                : trim(strip_tags($name));
+
+            // 清理CSS类名
+            $class = $platform['class'] ?? '';
+            $clean_class = function_exists('sanitize_html_class')
+                ? sanitize_html_class($class)
+                : preg_replace('/[^a-z0-9_\-]/', '', strtolower($class));
+
+            $clean_platforms[$clean_key] = [
+                'name' => $clean_name,
+                'class' => $clean_class,
+                'enabled' => !empty($platform['enabled']),
+                'patterns' => []
+            ];
+
+            // 清理正则表达式模式
+            if (!empty($platform['patterns']) && is_array($platform['patterns'])) {
+                foreach ($platform['patterns'] as $pattern) {
+                    $clean_pattern = function_exists('sanitize_text_field')
+                        ? sanitize_text_field($pattern)
+                        : trim(strip_tags($pattern));
+                    if (!empty($clean_pattern) && self::isValidRegex($clean_pattern)) {
+                        $clean_platforms[$clean_key]['patterns'][] = $clean_pattern;
+                    }
+                }
+            }
+        }
+
+        return $clean_platforms;
+    }
+
+    /**
+     * 清理样式数据
+     */
+    private static function sanitizeStyles($styles) {
+        $clean_styles = [];
+
+        foreach ($styles as $key => $style) {
+            // 清理键名
+            $clean_key = function_exists('sanitize_key')
+                ? sanitize_key($key)
+                : preg_replace('/[^a-z0-9_\-]/', '', strtolower($key));
+
+            // 清理样式名称
+            $name = $style['name'] ?? '';
+            $clean_name = function_exists('sanitize_text_field')
+                ? sanitize_text_field($name)
+                : trim(strip_tags($name));
+
+            $clean_styles[$clean_key] = [
+                'name' => $clean_name,
+                'css' => self::sanitizeCSS($style['css'] ?? '')
+            ];
+        }
+
+        return $clean_styles;
+    }
+
+    /**
+     * 验证正则表达式
+     */
+    private static function isValidRegex($pattern) {
+        return @preg_match('/' . $pattern . '/', '') !== false;
+    }
+
+    /**
+     * 清理CSS代码
+     */
+    private static function sanitizeCSS($css) {
+        // 基本的CSS清理，移除潜在的危险内容
+        $css = function_exists('wp_strip_all_tags')
+            ? wp_strip_all_tags($css)
+            : strip_tags($css);
+        $css = str_replace(['<script', '</script', 'javascript:', 'expression('], '', $css);
+        return $css;
     }
 }
 ?>

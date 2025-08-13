@@ -4,7 +4,18 @@
 
 (function($) {
     'use strict';
-    
+
+    // 检查jQuery和全局变量是否可用
+    if (typeof $ === 'undefined') {
+        console.warn('Simple CTA Admin: jQuery is not available');
+        return;
+    }
+
+    if (typeof simpleCTAAdmin === 'undefined') {
+        console.warn('Simple CTA Admin: simpleCTAAdmin object is not available');
+        return;
+    }
+
     // 当DOM准备就绪时执行
     $(document).ready(function() {
         
@@ -118,11 +129,10 @@
         // 实时预览样式
         $(document).on('input', '.style-item textarea[name*="[css]"]', function() {
             var $textarea = $(this);
-            var $preview = $textarea.closest('.style-item').find('.style-preview a');
             var css = $textarea.val();
-            
+
             // 更新预览样式
-            updateStylePreview($preview, css);
+            updateStylePreview(css);
         });
         
         // 保存设置
@@ -139,20 +149,19 @@
         $('.style-item').each(function() {
             var $item = $(this);
             var $textarea = $item.find('textarea[name*="[css]"]');
-            var $preview = $item.find('.style-preview a');
             var css = $textarea.val();
-            
-            updateStylePreview($preview, css);
+
+            updateStylePreview(css);
         });
     }
     
     /**
      * 更新样式预览
      */
-    function updateStylePreview($preview, css) {
+    function updateStylePreview(css) {
         // 移除旧的样式
         $('#simple-cta-preview-style').remove();
-        
+
         // 添加新的样式
         if (css.trim()) {
             $('<style id="simple-cta-preview-style">' + css + '</style>').appendTo('head');

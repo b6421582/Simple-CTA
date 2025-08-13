@@ -4,15 +4,18 @@
 
 (function($) {
     'use strict';
+
+    // 检查jQuery是否可用
+    if (typeof $ === 'undefined') {
+        console.warn('Simple CTA: jQuery is not available');
+        return;
+    }
     
     // 当DOM准备就绪时执行
     $(document).ready(function() {
         
         // 初始化CTA功能
         initSimpleCTA();
-        
-        // 添加点击跟踪（可选）
-        trackCTAClicks();
         
     });
     
@@ -88,53 +91,7 @@
         }
     }
     
-    /**
-     * 跟踪CTA点击事件
-     */
-    function trackCTAClicks() {
-        
-        $(document).on('click', '.simple-cta', function(e) {
-            var $cta = $(this);
-            var href = $cta.attr('href');
-            var text = $cta.text().trim();
-            var classes = $cta.attr('class');
-            
-            // 提取平台信息
-            var platform = 'unknown';
-            var platformClasses = ['amazon-cta', 'ebay-cta', 'walmart-cta', 'cj-cta', 'shareasale-cta', 'impact-cta', 'rakuten-cta'];
-            
-            for (var i = 0; i < platformClasses.length; i++) {
-                if (classes && classes.indexOf(platformClasses[i]) !== -1) {
-                    platform = platformClasses[i].replace('-cta', '');
-                    break;
-                }
-            }
-            
-            // 发送跟踪数据（可以发送到Google Analytics、自定义跟踪等）
-            if (typeof gtag !== 'undefined') {
-                gtag('event', 'cta_click', {
-                    'event_category': 'Simple CTA',
-                    'event_label': platform,
-                    'value': text,
-                    'custom_parameter_1': href
-                });
-            }
-            
-            // 控制台日志（开发调试用）
-            if (window.console && console.log) {
-                console.log('Simple CTA Click:', {
-                    platform: platform,
-                    text: text,
-                    href: href,
-                    timestamp: new Date().toISOString()
-                });
-            }
-            
-            // 可以在这里添加其他跟踪代码
-            // 例如：Facebook Pixel、自定义分析等
-            
-        });
-    }
+
     
     /**
      * 工具函数：检测链接平台
@@ -189,7 +146,7 @@
          * 移除CTA样式
          */
         removeStyle: function(selector) {
-            $(selector).removeClass(function(index, className) {
+            $(selector).removeClass(function(_, className) {
                 return (className.match(/(^|\s)simple-cta\S*/g) || []).join(' ');
             });
         },
@@ -213,31 +170,6 @@
             });
             
             initSimpleCTA();
-        },
-        
-        /**
-         * 获取统计信息
-         */
-        getStats: function() {
-            var stats = {
-                total: $('.simple-cta').length,
-                platforms: {}
-            };
-            
-            $('.simple-cta').each(function() {
-                var classes = $(this).attr('class');
-                var platformClasses = ['amazon-cta', 'ebay-cta', 'walmart-cta', 'cj-cta', 'shareasale-cta', 'impact-cta', 'rakuten-cta'];
-                
-                for (var i = 0; i < platformClasses.length; i++) {
-                    if (classes && classes.indexOf(platformClasses[i]) !== -1) {
-                        var platform = platformClasses[i].replace('-cta', '');
-                        stats.platforms[platform] = (stats.platforms[platform] || 0) + 1;
-                        break;
-                    }
-                }
-            });
-            
-            return stats;
         }
     };
     
