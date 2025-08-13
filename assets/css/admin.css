@@ -1,0 +1,354 @@
+/**
+ * Simple CTA 管理界面样式
+ */
+
+/* 管理界面容器 */
+.simple-cta-admin-container {
+    max-width: 1200px;
+    margin: 20px 0;
+}
+
+/* 标签页导航 */
+.simple-cta-tabs .nav-tab-wrapper {
+    border-bottom: 1px solid #ccd0d4;
+    margin-bottom: 20px;
+}
+
+.simple-cta-tabs .nav-tab {
+    position: relative;
+    display: inline-block;
+    padding: 12px 15px;
+    margin: 0 5px -1px 0;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: #646970;
+    text-decoration: none;
+    background: #f6f7f7;
+    border: 1px solid #c3c4c7;
+    border-bottom: none;
+    transition: all 0.2s ease;
+}
+
+.simple-cta-tabs .nav-tab:hover {
+    background: #fff;
+    color: #2271b1;
+}
+
+.simple-cta-tabs .nav-tab-active {
+    background: #fff;
+    color: #2271b1;
+    border-bottom: 1px solid #fff;
+    margin-bottom: -1px;
+}
+
+/* 标签页内容 */
+.simple-cta-tabs .tab-content {
+    display: none;
+    padding: 20px 0;
+    background: #fff;
+}
+
+.simple-cta-tabs .tab-content.active {
+    display: block;
+}
+
+/* 平台项目样式 */
+.platform-item {
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin: 20px 0;
+    background: #fff;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.platform-item h3 {
+    margin: 0 0 15px 0;
+    padding: 0 0 10px 0;
+    border-bottom: 1px solid #eee;
+    color: #23282d;
+}
+
+.platform-item h3 label {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.platform-item h3 input[type="checkbox"] {
+    margin-right: 10px;
+    transform: scale(1.2);
+}
+
+/* 规则模式项目 */
+.patterns-list {
+    margin-bottom: 10px;
+}
+
+.pattern-item {
+    display: flex;
+    align-items: center;
+    margin: 8px 0;
+    gap: 10px;
+}
+
+.pattern-item input[type="text"] {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+}
+
+.pattern-item .button {
+    flex-shrink: 0;
+    padding: 6px 12px;
+    font-size: 12px;
+}
+
+.remove-pattern {
+    background: #dc3232;
+    color: white;
+    border-color: #dc3232;
+}
+
+.remove-pattern:hover {
+    background: #c62d2d;
+    border-color: #c62d2d;
+}
+
+/* 样式项目 */
+.style-item {
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin: 20px 0;
+    background: #fff;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.style-item h3 {
+    margin: 0 0 15px 0;
+    padding: 0 0 10px 0;
+    border-bottom: 1px solid #eee;
+    color: #23282d;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.style-item textarea.code {
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.4;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    padding: 12px;
+    resize: vertical;
+}
+
+/* 样式预览 */
+.style-preview {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.style-preview h4 {
+    margin: 0 0 10px 0;
+    color: #646970;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* 预览区域 */
+.preview-section {
+    margin: 30px 0;
+    padding: 20px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.preview-section h3 {
+    margin: 0 0 15px 0;
+    color: #23282d;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.style-previews {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.preview-item {
+    padding: 15px;
+    border: 1px solid #ddd;
+    background: #fff;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.preview-item h4 {
+    margin: 0 0 10px 0;
+    color: #646970;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* 测试区域 */
+#test-content {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.4;
+    resize: vertical;
+}
+
+#test-results {
+    padding: 15px;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    min-height: 50px;
+}
+
+/* 添加新项目按钮 */
+.add-platform-section,
+.add-style-section {
+    margin: 30px 0;
+    padding: 20px;
+    background: #f6f7f7;
+    border: 2px dashed #c3c4c7;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.add-platform-section h3,
+.add-style-section h3 {
+    margin: 0 0 15px 0;
+    color: #646970;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .simple-cta-admin-container {
+        margin: 10px 0;
+    }
+    
+    .platform-item,
+    .style-item {
+        padding: 15px;
+        margin: 15px 0;
+    }
+    
+    .pattern-item {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .pattern-item input[type="text"] {
+        margin-bottom: 5px;
+    }
+    
+    .style-previews {
+        grid-template-columns: 1fr;
+    }
+    
+    .simple-cta-tabs .nav-tab {
+        display: block;
+        margin: 0 0 5px 0;
+        text-align: center;
+    }
+}
+
+/* 加载动画 */
+.simple-cta-loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #2271b1;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 成功/错误消息 */
+.simple-cta-message {
+    padding: 10px 15px;
+    margin: 15px 0;
+    border-radius: 3px;
+    font-weight: 600;
+}
+
+.simple-cta-message.success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.simple-cta-message.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* 工具提示 */
+.simple-cta-tooltip {
+    position: relative;
+    display: inline-block;
+    cursor: help;
+}
+
+.simple-cta-tooltip .tooltip-text {
+    visibility: hidden;
+    width: 200px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 10px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -100px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.simple-cta-tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* 代码高亮 */
+.simple-cta-code {
+    background: #f1f1f1;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    padding: 2px 6px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    color: #d63384;
+}
